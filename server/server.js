@@ -28,6 +28,7 @@ var Kitten = mongoose.model('Kitten', kittySchema);
 var cat = new Kitten({ name: 'Silence' });
 
 
+
 cat.save(function (err, cat) {
     if (err) return console.error(err);
     cat.speak();
