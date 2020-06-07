@@ -23,6 +23,7 @@ kittySchema.methods.speak = function () {
   console.log('---',greeting);
 }
 
+
 var Kitten = mongoose.model('Kitten', kittySchema);
 var cat = new Kitten({ name: 'Silence' });
 
