@@ -50,27 +50,28 @@ export default {
 			default: 3,
 		},
         date: {
-			type: String,
+			type: Number,
 			required: true,
-			default: '0',
+			default: 0,
 		},
 
-        array: {
-            type: Array,
-            required: true,
-            default: function () { return [] }
-        }
+        // array: {
+        //     type: Array,
+        //     required: true,
+        //     default: function () { return [] }
+        // }
     },
     methods: {
         ErrorDismiss(index) {
             this.$emit('error-remove',index)
         },
         processDate(date){
-            date = new Date(date * 1000);
-            var d = date.getDay();
-            var m = date.getMonth();
+            date = new Date(date);
+            var d = '0'+date.getDate();
+            var m = '0'+(date.getMonth()+1);
             var y = date.getYear()%100;
-            return d + '/' + m + '/' + y
+            console.log(y)
+            return d.substr(-2) + '/' + m.substr(-2) + '/' + y
         }
     }
 };

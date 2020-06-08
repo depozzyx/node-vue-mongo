@@ -7,13 +7,16 @@
     <button @click='ProcessArticle()' type="button" name="button">SUBMIT ARTICLE</button>
 
     <div id = 'news-body'>
-        <ArticleComponent v-for='(article, index) in ArticleArray.slice().reverse()'
-                          :key = 'article[3] + Date.now() * index'
-                          :title = 'article[0]'
-                          :desc = 'article[1]'
-                          :author = 'article[2]'
-                          :date = 'article[3]'
-                          :rate = 'article[4]'/>
+        <transition-group name="list" tag="div">
+            <ArticleComponent v-for='(article, index) in ArticleArray.slice().reverse()'
+                              :key = 'Date.now() * index'
+                              :title = 'article[0]'
+                              :desc = 'article[1]'
+                              :author = 'article[2]'
+                              :date = 'article[3]'
+                              :rate = 'article[4]'
+                              class="list-item"/>
+        </transition-group>
         <!-- <ArticleComponent title = 'DUCK' date = '1549312452' author = 'John Stewart' desc = ' i suppose.'/> -->
         <!-- <ArticleComponent /> -->
     </div>
@@ -41,16 +44,18 @@ export default {
         }
     },
     beforeCreate() {
-        let data = 'lol'
-        axios.post('http://localhost:3001/GetArticle', data, {})
+        axios.post('http://localhost:3001/GetArticle', 'lol', {})
         .then(res => { // then print response status
             this.ArticleArray = res.data
-            // this.files = res.data
-            // this.forceUpdate()
-
         })
     },
     methods: {
+        GetArticlesArray(){
+            axios.post('http://localhost:3001/GetArticle', 'lol', {})
+            .then(res => { // then print response status
+                this.ArticleArray = res.data
+            })
+        },
         ProcessArticle(){
             this.ArticleBug = 6
             !this.ArticleName ? this.ArticleName = '' : this.ArticleBug -= 1
@@ -78,6 +83,7 @@ export default {
                 this.ArticleName = ''
                 this.ArticleDesc = ''
                 this.ArticleAuthor = ''
+                this.GetArticlesArray()
             }else{
                 console.log('lox')
             }
@@ -115,6 +121,17 @@ export default {
 </script>
 
 <style>
+    .list-item {
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .list-enter-active, .list-leave-active {
+        transition: all 1s;
+    }
+    .list-enter, .list-leave-to /* .list-leave-active до версии 2.1.8 */ {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
     #news-body{
         margin-left: 30%;
         width: 40%;

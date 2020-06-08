@@ -9,24 +9,31 @@ const bodyParser = require('body-parser');
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost/test', {useNewUrlParser: true});
+mongoose.connect('mongodb://localhost/test', {useNewUrlParser: true,useUnifiedTopology: true, dbpath: 'E:/'});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
 	console.log('opened!')
 });
 
-// var kittySchema = new mongoose.Schema({
-//   name: String
-// });
+
 var articleSchema = new mongoose.Schema({
 	name: String,
 	desc: String,
 	author: String,
 	date: Number,
 	rate: Number
-
 });
+var Article = mongoose.model('Article', articleSchema);
+
+var userSchema = new mongoose.Schema({
+	login: String, // @depozzyx
+	name: String, // Depozzyx Depozzyx
+	password: String,
+	date: Number,
+	rate: Number,
+});
+var User = mongoose.model('User', userSchema);
 // kittySchema.methods.speak = function () {
 //   var greeting = this.name
 //     ? "Meow name is " + this.name
@@ -35,10 +42,10 @@ var articleSchema = new mongoose.Schema({
 // }
 
 
-// var Kitten = mongoose.model('Kitten', kittySchema);
-var Article = mongoose.model('Article', articleSchema);
+
+
 // Article.deleteMany({})
-// Article.remove({}, function(err) { 
+// Article.remove({}, function(err) {
 //    console.log('collection removed')
 // });
 
@@ -89,12 +96,66 @@ app.post('/MusicList',function(req, res) {
 	    res.status(200).send([files,durations])
 	});
 });
+// ACCOUNT SYSTEM
 
+app.post('/NewUser',function(req, res) {
+	let found = 0
+	let clog = req.query.login
+
+	User.find(function (err, obj) {
+		if (err) return console.error(err);
+
+		for (var i = 0; i < obj.length; i++) {
+			if (clog === obj[i].login){
+				found = 1
+				break
+			}
+		}
+	})
+
+	if (found){
+		res.status(200).send(0)
+	}else{
+		var userobj = new User({login: req.query.login,
+								name: req.query.name,
+								password: req.query.password,
+								date: new Date(),
+								rate: 0 });
+		userobj.save(function (err, obj) {
+		    if (err) return console.error(err);
+		});
+		res.status(200).send(1)
+	}
+
+});
+
+app.post('/CompareUser',function(req, res) {
+	let clog = req.query.login
+	let cpas = req.query.password
+	User.find(function (err, obj) {
+		if (err) return console.error(err);
+		let found = 0
+
+		for (var i = 0; i < obj.length; i++) {
+			if ((clog === obj[i].login) && (cpas === obj[i].password)){
+				found = 1
+				res.status(200).send([obj[i].name,obj[i].date,obj[i].rate])
+				break
+			}
+		}
+		if (found === 0){
+			res.status(200).send(0)
+		}
+
+	})
+});
+
+// ARTICLE SYSTEM
 app.post('/PostArticle',function(req, res) {
 	var newe = new Article({name: req.query.name,
 							desc: req.query.desc,
 							author: req.query.author,
-							date: Math.floor(new Date() / 1000),
+							date: new Date(),
 							rate: 0 });
 	newe.save(function (err, newe) {
 	    if (err) return console.error(err);
