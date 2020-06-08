@@ -32,6 +32,7 @@ var userSchema = new mongoose.Schema({
 	password: String,
 	date: Number,
 	rate: Number,
+	useragent: String,
 });
 var User = mongoose.model('User', userSchema);
 // kittySchema.methods.speak = function () {
@@ -58,6 +59,15 @@ var User = mongoose.model('User', userSchema);
 //     cat.speak();
 // 	cat.speak()
 // });
+
+User.find(function (err, obj) {
+	if (err) return console.error(err);
+	let found = 0
+
+	for (var i = 0; i < obj.length; i++) {
+		console.log(obj[i])
+	}
+})
 
 
 // Kitten.find(function (err, kittens) {
@@ -106,6 +116,7 @@ app.post('/NewUser',function(req, res) {
 		if (err) return console.error(err);
 
 		for (var i = 0; i < obj.length; i++) {
+			console.log(obj[i],' ',clog)
 			if (clog === obj[i].login){
 				found = 1
 				break
@@ -114,17 +125,22 @@ app.post('/NewUser',function(req, res) {
 	})
 
 	if (found){
-		res.status(200).send(0)
+		res.status(200).send('not ok')
 	}else{
 		var userobj = new User({login: req.query.login,
 								name: req.query.name,
 								password: req.query.password,
 								date: new Date(),
-								rate: 0 });
+								rate: 0,
+							 	useragent: req.headers['user-agent']+' '+req.ip });
+		console.log(req.headers['user-agent'])
 		userobj.save(function (err, obj) {
-		    if (err) return console.error(err);
+		    if (err){
+				res.status(200).send('not ok')
+				return console.error(err);
+			}
 		});
-		res.status(200).send(1)
+		res.status(200).send('ok')
 	}
 
 });
@@ -138,8 +154,9 @@ app.post('/CompareUser',function(req, res) {
 
 		for (var i = 0; i < obj.length; i++) {
 			if ((clog === obj[i].login) && (cpas === obj[i].password)){
+				console.log(obj[i])
 				found = 1
-				res.status(200).send([obj[i].name,obj[i].date,obj[i].rate])
+				res.status(200).send([obj[i].name,obj[i].date,obj[i].rate,obj[i]._id])
 				break
 			}
 		}
