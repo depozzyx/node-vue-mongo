@@ -5,6 +5,7 @@
       <router-link to="/news">News</router-link> |
       <router-link to="/error-test">Error</router-link> |
       <router-link to="/account">Account</router-link>
+      <!-- <router-link :to="{ name: 'user', params: { userId: 123 }}">Пользователь</router-link> -->
     </div>
     <router-view />
   </div>

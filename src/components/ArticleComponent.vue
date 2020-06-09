@@ -5,7 +5,7 @@
             <h2>{{author}}, {{processDate(date)}}</h2>
         </div>
         <div class="news-desc">
-            <p>{{desc}}</p>
+            <p>{{processDesc(desc)}}</p>
         </div>
         <div class="news-footer">
             <b>{{rate}} / 5</b>
@@ -72,6 +72,14 @@ export default {
             var y = date.getYear()%100;
             console.log(y)
             return d.substr(-2) + '/' + m.substr(-2) + '/' + y
+        },
+        processDesc(desc){
+            desc = desc + ''
+            if (desc.length > 200){
+                return desc.substring(0,200)+'...'
+            }else{
+                return desc
+            }
         }
     }
 };
@@ -80,7 +88,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
         .news-wrapper{
-            width: calc(100% - 50px);
+            width: calc(100%);
             padding: 30px;
             padding-right: calc(30px - 5px);
             margin-bottom: 20px;

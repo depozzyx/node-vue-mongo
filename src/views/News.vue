@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <h1>Recent news: </h1>
+    <h1>Recent blogs: </h1>
 
 
     <div id = 'news-body'>
@@ -11,24 +11,29 @@
                 <button v-show = '!AddField' @click='AddField = !AddField' style='float: right;'>yes!</button>
                 <button v-show = 'AddField' @click='AddField = !AddField' style='float: right;'>well, no.</button>
             </div>
-            <div v-show = 'AddField' style = 'width: 100%; margin-top: 50px;'>
-                <input type="text" v-model="ArticleAuthor" name="" placeholder="Error Title" value="">
-                <input type="text" v-model="ArticleName" name="" placeholder="Error Title" value="">
-                <input type="text" v-model="ArticleDesc" name="" placeholder="Error Title" value="">
+            <div v-if = 'AddField && TimCook' class = 'd-flex flex-column justify-content-start' style = 'width: 100%; margin-top: 50px;'>
+                <input style = 'width: 40%' type="text" v-model="ArticleName" name="" placeholder="Blog title" value="">
+                <input style = 'resize:both' type="text" v-model="ArticleDesc" name="" placeholder="Error Title" value="">
                 <button @click='ProcessArticle()' type="button" name="button">Add</button>
+            </div>
+            <div v-if = 'AddField && !TimCook' class = 'd-flex flex-column justify-content-start' style = 'width: 100%; margin-top: 50px;'>
+                <h4>You are not logged in. Would you like to?</h4>
+                <router-link to="/account"><button type="button" name="button">Go to login!</button></router-link>
             </div>
             <!-- <button style='opacity: 0;'>0</button> -->
             <!-- <h1 style='opacity: 0;'>1</h1> -->
         </div>
         <transition-group name="list" tag="div">
-            <ArticleComponent v-for='(article, index) in ArticleArray.slice().reverse()'
-                              :key = 'Date.now() * index'
-                              :title = 'article[0]'
-                              :desc = 'article[1]'
-                              :author = 'article[2]'
-                              :date = 'article[3]'
-                              :rate = 'article[4]'
-                              class="list-item"/>
+            <router-link :to="{ name: 'Article', params: { id: article[5]}}"
+                         v-for='(article, index) in ArticleArray.slice().reverse()'
+                         :key = 'Date.now() * index'>
+                <ArticleComponent :title = 'article[0]'
+                                  :desc = 'article[1]'
+                                  :author = 'article[2]'
+                                  :date = 'article[3]'
+                                  :rate = 'article[4]'
+                                  class="list-item"/>
+            </router-link>
         </transition-group>
         <!-- <ArticleComponent title = 'DUCK' date = '1549312452' author = 'John Stewart' desc = ' i suppose.'/> -->
         <!-- <ArticleComponent /> -->
@@ -49,9 +54,12 @@ export default {
     data () {
         return {
             AddField: false,
+            TimCook: false,
+
             ArticleName: undefined,
             ArticleDesc: undefined,
             ArticleAuthor: undefined,
+            ArticleAuthorLogin: undefined,
             ArticleDate: undefined,
             ArticleBug: 3,
             ArticleArray: [],
@@ -63,12 +71,24 @@ export default {
             this.ArticleArray = res.data
         })
     },
+    created(){
+        this.ArticleAuthor = this.getCookie('name')
+        this.ArticleAuthorLogin = this.getCookie('login')
+        if (this.ArticleAuthorLogin){
+            this.TimCook = true
+        }
+    },
     methods: {
         GetArticlesArray(){
             axios.post('http://localhost:3001/GetArticle', 'lol', {})
             .then(res => { // then print response status
                 this.ArticleArray = res.data
             })
+        },
+        getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
         },
         ProcessArticle(){
             this.ArticleBug = 6
@@ -83,21 +103,24 @@ export default {
             this.ArticleDate =  Date.now()
 
             if (!this.ArticleBug){
-                let data = [this.ArticleName,this.ArticleDesc,this.ArticleAuthor]
-                let url = `http://localhost:3001/PostArticle?name=${this.ArticleName}&desc=${this.ArticleDesc}&author=${this.ArticleAuthor}`
+                let url = `http://localhost:3001/PostArticle?name=${this.ArticleName}&desc=${this.ArticleDesc}&author=${this.ArticleAuthor}&login=${this.ArticleAuthorLogin}`
 
-        		axios.post(url, data, {})
+        		axios.post(url, 'data', {})
         		.then(res => { // then print response status
-        			console.log('---',res)
-        			// this.files = res.data
-        			// this.forceUpdate()
+        			if (res.data == 'ok'){
+                        this.GetArticlesArray()
+                    }else{
+                        this.TimCook = false
+                        console.log('lox')
+                        document.cookie = "login=;expires=0";
+                    }
 
         		})
-
                 this.ArticleName = ''
                 this.ArticleDesc = ''
                 this.ArticleAuthor = ''
-                this.GetArticlesArray()
+
+
             }else{
                 console.log('lox')
             }
@@ -134,9 +157,9 @@ export default {
 };
 </script>
 
-<style>
+<style scope>
     .news-wrapper{
-        width: calc(100% - 30px);
+        width: calc(100%);
         padding: 10px;
         padding-right: calc(30px - 5px);
         margin-bottom: 20px;
@@ -186,13 +209,26 @@ export default {
         width: 40%;
 
     }
-    input{
+    /* input{
         border-radius: 5px;
         border: 2px #42b983 solid;
         padding: 10px;
         background: #f5f5f5;
         margin: 5px;
         transition: 0.5s;
+    } */
+    input{
+        border-radius: 5px;
+        border: 0px #000 solid;
+        border-bottom: 2px #42b983 solid;
+        padding: 10px;
+        background: #f5f5f5;
+        margin-bottom: 10px;
+        margin-left: 0px;
+        margin: 5px;
+        transition: 0.5s;
+
+        color: #42b983;
     }
     input:focus{
         background: #42b983;

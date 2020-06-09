@@ -9,8 +9,8 @@
                 <h1>{{UName}} <b>{{URate}} <i class="fas fa-long-arrow-alt-up"></i></b></h1>
                 <h3>#{{ULogin}}</h3>
                 <br />
-                <h3>Creation date:{{UDate}}</h3>
-                <h3>Accound ID:{{UId}}</h3>
+                <h3>Creation date: {{processDate(UDate)}}</h3>
+                <h3>Accound ID: {{UId}}</h3>
                 <!-- <button style='float: right;'>dismiss.</button>
                 <button v-show = '!AddField' @click='AddField = !AddField' style='float: right;'>yes!</button>
                 <button v-show = 'AddField' @click='AddField = !AddField' style='float: right;'>well, no.</button> -->
@@ -97,32 +97,80 @@ export default {
             ArticleArray: [],
         }
     },
-    beforeCreate() {
-        axios.post('http://localhost:3001/GetArticle', 'lol', {})
-        .then(res => { // then print response status
-            this.ArticleArray = res.data
-        })
+    created() {
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+        if (getCookie('login')){
+            this.ULogin = getCookie('login')
+            this.UName = getCookie('name')
+            this.UDate = getCookie('date')
+            this.URate = getCookie('rate')
+            this.UId = getCookie('id')
+            this.Window = 2
+            // alert('logged!')
+        }else{
+            this.Window = 0
+        }
     },
     methods: {
-        GetArticlesArray(){
-            axios.post('http://localhost:3001/GetArticle', 'lol', {})
-            .then(res => { // then print response status
-                this.ArticleArray = res.data
-            })
-        },
         CheckRegister(){
             this.Window = -1
             let url = `http://localhost:3001/NewUser?name=${this.TempRName}&login=${this.TempRLogin}&password=${this.TempRPassword}`
             axios.post(url, 'lol', {})
             .then(res => { // then print response status
-                this.ArticleArray = res.data
-                if (res.data === 'lol'){
+                // this.ArticleArray = res.data
+                console.log(res.data)
+                if (res.data === 'ok'){
                     this.Window = 0
                 }else{
                     this.Window = -2
                 }
             })
         },
+        CheckLogin(){
+            this.Window = -1
+            let url = `http://localhost:3001/CompareUser?login=${this.TempLogin}&password=${this.TempPassword}`
+            axios.post(url, 'lol', {})
+            .then(res => { // then print response status
+                // this.ArticleArray = res.data
+                console.log(res.data)
+                if (res.data === 'not ok'){
+                    this.Window = -2
+                }else{
+                    this.Window = 2
+                    this.ULogin = this.TempLogin
+                    this.UName = res.data[0]
+                    this.UDate = res.data[1]
+                    this.URate = res.data[2]
+                    this.UId = res.data[3]
+
+                    let date = new Date(Date.now() + 86400e3);
+    				date = date.toUTCString();
+
+                    document.cookie = "login="+this.TempLogin+"; expires="+date;
+    		  		document.cookie = "name="+res.data[0]+"; expires="+date;
+                    document.cookie = "date="+res.data[1]+"; expires="+date;
+                    document.cookie = "rate="+res.data[2]+"; expires="+date;
+                    document.cookie = "id="+res.data[3]+"; expires="+date;
+                }
+            })
+        },
+        getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        },
+        processDate(date){
+            date = new Date(date);
+            var d = '0'+date.getDate();
+            var m = '0'+(date.getMonth()+1);
+            var y = date.getYear()%100;
+            console.log(y)
+            return d.substr(-2) + '/' + m.substr(-2) + '/' + y
+        }
    }
 };
 </script>

@@ -1,10 +1,21 @@
 var mongoose = require('mongoose');
 
+
 var fs = require('fs');
 var express = require('express');
 var app = express();
 var cors = require('cors');
 const bodyParser = require('body-parser');
+
+var path = require('path');
+var serveStatic = require('serve-static');
+app.use(serveStatic("../"));
+var port = process.env.PORT || 5000;
+var hostname = '127.0.0.1';
+
+app.listen(port, hostname, () => {
+   console.log(`Server running at http://${hostname}:${port}/`);
+ });
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -35,58 +46,6 @@ var userSchema = new mongoose.Schema({
 	useragent: String,
 });
 var User = mongoose.model('User', userSchema);
-// kittySchema.methods.speak = function () {
-//   var greeting = this.name
-//     ? "Meow name is " + this.name
-//     : "I don't have a name";
-//   console.log('---',greeting);
-// }
-
-
-
-
-// Article.deleteMany({})
-// Article.remove({}, function(err) {
-//    console.log('collection removed')
-// });
-
-// var cat = new Kitten({ name: 'Silence' });
-//
-//
-//
-// cat.save(function (err, cat) {
-//     if (err) return console.error(err);
-//     cat.speak();
-// 	cat.speak()
-// });
-
-User.find(function (err, obj) {
-	if (err) return console.error(err);
-	let found = 0
-
-	for (var i = 0; i < obj.length; i++) {
-		console.log(obj[i])
-	}
-})
-
-
-// Kitten.find(function (err, kittens) {
-//   if (err) return console.error(err);
-//   console.log('---',kittens);
-// })
-
-// const MongoClient = require("mongodb").MongoClient;
-//
-// // создаем объект MongoClient и передаем ему строку подключения
-// const mongoClient = new MongoClient("mongodb://localhost:27017/", { useNewUrlParser: true });
-// mongoClient.connect(function(err, client){
-//
-//     if(err){
-//         return console.log(err);
-//     }
-//     // взаимодействие с базой данных
-//     client.close();
-// });
 
 app.post('/MusicList',function(req, res) {
 
@@ -111,37 +70,43 @@ app.post('/MusicList',function(req, res) {
 app.post('/NewUser',function(req, res) {
 	let found = 0
 	let clog = req.query.login
+	console.log('---')
 
 	User.find(function (err, obj) {
 		if (err) return console.error(err);
 
 		for (var i = 0; i < obj.length; i++) {
-			console.log(obj[i],' ',clog)
-			if (clog === obj[i].login){
+			if (clog == obj[i].login){
 				found = 1
+				console.log('found')
 				break
 			}
 		}
+
+		if (found == 1){
+			console.log('not ok!')
+			res.status(200).send('not ok')
+			return
+		}else{
+			var userobj = new User({login: req.query.login,
+									name: req.query.name,
+									password: req.query.password,
+									date: new Date(),
+									rate: 0,
+								 	useragent: req.headers['user-agent']+' '+req.ip });
+			console.log(req.headers['user-agent'])
+			userobj.save(function (err, obj) {
+			    if (err){
+					res.status(200).send('not')
+					return console.error(err);
+				}
+			});
+			res.status(200).send('ok')
+		}
 	})
 
-	if (found){
-		res.status(200).send('not ok')
-	}else{
-		var userobj = new User({login: req.query.login,
-								name: req.query.name,
-								password: req.query.password,
-								date: new Date(),
-								rate: 0,
-							 	useragent: req.headers['user-agent']+' '+req.ip });
-		console.log(req.headers['user-agent'])
-		userobj.save(function (err, obj) {
-		    if (err){
-				res.status(200).send('not ok')
-				return console.error(err);
-			}
-		});
-		res.status(200).send('ok')
-	}
+	// console.log(found)
+
 
 });
 
@@ -161,7 +126,7 @@ app.post('/CompareUser',function(req, res) {
 			}
 		}
 		if (found === 0){
-			res.status(200).send(0)
+			res.status(200).send('not ok')
 		}
 
 	})
@@ -169,14 +134,36 @@ app.post('/CompareUser',function(req, res) {
 
 // ARTICLE SYSTEM
 app.post('/PostArticle',function(req, res) {
-	var newe = new Article({name: req.query.name,
-							desc: req.query.desc,
-							author: req.query.author,
-							date: new Date(),
-							rate: 0 });
-	newe.save(function (err, newe) {
-	    if (err) return console.error(err);
-	});
+	let clog = req.query.login
+	let cusr = '@@@@@@#$%^&*()__)DFGDFGHG67Ff@%^G@^g6&@'
+	let caut = ''
+	User.find(function (err, obj) {
+		if (err) return console.error(err);
+		for (var i = 0; i < obj.length; i++) {
+			if (clog === obj[i].login){
+				cusr = obj[i].useragent
+				caut = obj[i].name
+				break
+			}
+		}
+		console.log(cusr, req.headers['user-agent']+' '+req.ip)
+		if (cusr === req.headers['user-agent']+' '+req.ip){
+			var newe = new Article({name: req.query.name,
+									desc: req.query.desc,
+									author: caut,
+									date: new Date(),
+									rate: 0 });
+			newe.save(function (err, newe) {
+			    if (err) return console.error(err);
+			});
+
+			res.status(200).send('ok')
+		}else{
+			res.status(200).send('not ok')
+		}
+	})
+
+
 
 });
 
@@ -187,11 +174,40 @@ app.post('/GetArticle',function(req, res) {
 		// console.log('---',articles);
 		let return_array = []
 		for (var i = 0; i < articles.length; i++) {
-			return_array.push([articles[i].name,articles[i].desc,articles[i].author,articles[i].date,articles[i].rate])
+			return_array.push([articles[i].name,articles[i].desc,articles[i].author,articles[i].date,articles[i].rate,articles[i]._id])
 		}
 		console.log(return_array)
 		res.status(200).send(return_array)
 	})
+});
+
+app.post('/GetArticleById',function(req, res) {
+	var id = req.query.id
+	Article.find({ '_id': id },'name desc author date rate',function(err,docs){
+        if (err)
+            console.log('error occured in the database');
+        console.log('->-',docs);
+		try{
+			let return_array = [docs[0].name,docs[0].desc,docs[0].author,docs[0].date,docs[0].rate]
+			console.log('---',return_array)
+			res.status(200).send(return_array)
+		}catch{
+			res.status(200).send('not ok')
+		}
+    });
+	// Article.find({ '_id': id }).then(ebooks => res.json(ebooks));
+	// console.log(query)
+	// Article.find(function (err, articles) {
+	// 	if (err) return console.error(err);
+	//
+	// 	// console.log('---',articles);
+	// 	let return_array = []
+	// 	for (var i = 0; i < articles.length; i++) {
+	// 		return_array.push([articles[i].name,articles[i].desc,articles[i].author,articles[i].date,articles[i].rate,articles[i]._id])
+	// 	}
+	// 	console.log(return_array)
+	// 	res.status(200).send(return_array)
+	// })
 });
 
 app.listen(3001, function() {
