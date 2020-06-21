@@ -20,9 +20,12 @@
   color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
-}
+	h3{
+		margin: 10px !important;
+		text-transform: uppercase;
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 500;
+	}
 
 #nav a {
   font-weight: bold;
