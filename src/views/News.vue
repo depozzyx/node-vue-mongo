@@ -8,7 +8,7 @@
             <div style = 'width: 100%'>
                 <h1 style = 'float: left;'>Want to add one?</h1>
                 <button style='float: right;'>dismiss.</button>
-                <button v-show = '!AddField' @click='AddField = !AddField' style='float: right;'>yes!</button>
+                <button v-show = '!AddField' @click='AddField = !AddField' class = 'button--sacnite' style='float: right;'>yes!</button>
                 <button v-show = 'AddField' @click='AddField = !AddField' style='float: right;'>well, no.</button>
             </div>
             <div v-if = 'AddField && TimCook' class = 'd-flex flex-column justify-content-start' style = 'width: 100%; margin-top: 50px;'>
@@ -158,104 +158,5 @@ export default {
 </script>
 
 <style scope>
-    .news-wrapper{
-        width: calc(100%);
-        padding: 10px;
-        padding-right: calc(30px - 5px);
-        margin-bottom: 20px;
-
-        text-align: left;
-        color: #fff;
-        background-color: #42b983;
-        border-left: 5px solid #42b983;
-        border-radius: 0px;
-        transition: 0.5s;
-    }
-    .news-wrapper:hover{
-        /* border-left: 30px solid #42b983; */
-        /* cursor: pointer; */
-        /*     padding-right: 0px; */
-    }
-    .news-wrapper h1{
-        line-height: 100%;
-        margin: 0px;
-        padding: 0px;
-    }
-    .news-wrapper button{
-        transform: translateY(-2px);
-        color: #42b984;
-        background: #fff;
-        margin-left: 5px;
-    }
-    .news-wrapper button:hover{
-        /* background: #aaa; */
-        transform: translateY(-2px);
-        text-decoration: underline;
-    }
-
-    .list-item {
-        display: inline-block;
-        margin-right: 10px;
-    }
-    .list-enter-active, .list-leave-active {
-        transition: all 1s;
-    }
-    .list-enter, .list-leave-to /* .list-leave-active до версии 2.1.8 */ {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    #news-body{
-        margin-left: 30%;
-        width: 40%;
-
-    }
-    /* input{
-        border-radius: 5px;
-        border: 2px #42b983 solid;
-        padding: 10px;
-        background: #f5f5f5;
-        margin: 5px;
-        transition: 0.5s;
-    } */
-    input{
-        border-radius: 5px;
-        border: 0px #000 solid;
-        border-bottom: 2px #42b983 solid;
-        padding: 10px;
-        background: #f5f5f5;
-        margin-bottom: 10px;
-        margin-left: 0px;
-        margin: 5px;
-        transition: 0.5s;
-
-        color: #42b983;
-    }
-    input:focus{
-        background: #42b983;
-        color: #f5f5f5;
-        outline: none;
-    }
-    input::placeholder{
-        color: #42b983;
-    }
-    input:focus::placeholder{
-        color: #f5f5f5;
-    }
-button {
-    background-color: #42b983;
-    border-radius: 5px;
-    border: none;
-    padding: 10px;
-    font-weight: bold;
-    color: #f5f5f5;
-    transition: 0.5s;
-    float: none;
-    margin: 0px;
-}
-button:hover{
-    background-color: #f5f5f5;
-    color: #42b983;
-    transform: translateY(3px);
-    cursor: pointer;
-}
+    
 </style>

@@ -61,39 +61,5 @@ export default {
 </script>
 
 <style>
-    input{
-        border-radius: 5px;
-        border: 2px #42b983 solid;
-        padding: 10px;
-        background: #f5f5f5;
-        margin: 5px;
-        transition: 0.5s;
-    }
-    input:focus{
-        background: #42b983;
-        color: #f5f5f5;
-        outline: none;
-    }
-    input::placeholder{
-        color: #42b983;
-    }
-    input:focus::placeholder{
-        color: #f5f5f5;
-    }
-button {
-    background-color: #42b983;
-    border-radius: 5px;
-    border: none;
-    padding: 10px;
-    font-weight: bold;
-    color: #f5f5f5;
-    transition: 0.5s;
-    float: none;
-}
-button:hover{
-    background-color: #f5f5f5;
-    color: #42b983;
-    transform: translateY(3px);
-    cursor: pointer;
-}
+
 </style>
