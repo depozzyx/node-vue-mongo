@@ -1,10 +1,26 @@
 <template>
   <div class="about">
-    <h1>Recent blogs: </h1>
 
+    <Bogdan msg="Community Blogs" left = 'calc(30% - 10px)'/>
 
-    <div id = 'news-body'>
-        <div style="overflow: auto;" class="news-wrapper">
+	<div id="app">
+		<div class = ' navy-wrap'>
+			<div class = 'navy-sub'>
+				<br>
+			</div>
+			<div class = 'd-flex justify-content-center navy-center'>
+				<router-link to="/">
+					<button @click='UpdLogin()'>
+						Add
+					</button>
+				</router-link>
+			</div>
+		</div>
+	</div>
+
+    <div class = 'wrap-wisconsin-30'>
+		
+        <div>
             <div style = 'width: 100%'>
                 <h1 style = 'float: left;'>Want to add one?</h1>
                 <button style='float: right;'>dismiss.</button>
@@ -23,6 +39,7 @@
             <!-- <button style='opacity: 0;'>0</button> -->
             <!-- <h1 style='opacity: 0;'>1</h1> -->
         </div>
+
         <transition-group name="list" tag="div">
             <router-link :to="{ name: 'Article', params: { id: article[5]}}"
                          v-for='(article, index) in ArticleArray.slice().reverse()'
@@ -35,8 +52,6 @@
                                   class="list-item"/>
             </router-link>
         </transition-group>
-        <!-- <ArticleComponent title = 'DUCK' date = '1549312452' author = 'John Stewart' desc = ' i suppose.'/> -->
-        <!-- <ArticleComponent /> -->
     </div>
   </div>
 </template>
@@ -44,12 +59,14 @@
 <script>
 // @ is an alias to /src
 import ArticleComponent from "@/components/ArticleComponent.vue";
+import Bogdan from "@/components/Bogdan.vue";
 import axios from 'axios';
 
 export default {
     name: "News",
     components: {
-        ArticleComponent
+        ArticleComponent,
+        Bogdan
     },
     data () {
         return {
@@ -122,7 +139,7 @@ export default {
 
 
             }else{
-                console.log('lox')
+                console.log('lox2')
             }
 
         },
@@ -157,6 +174,6 @@ export default {
 };
 </script>
 
-<style scope>
-    
+<style scoped>
+
 </style>

@@ -1,20 +1,74 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/news">News</router-link> |
-      <router-link to="/error-test">Error</router-link> |
-      <router-link to="/account">Account</router-link>
-      <!-- <router-link :to="{ name: 'user', params: { userId: 123 }}">Пользователь</router-link> -->
-    </div>
-    <router-view />
-  </div>
+	<div id="app">
+		<div class = ' navy-wrap'>
+			<div class = 'navy-sub'>
+				
+			</div>
+			<div class = 'd-flex justify-content-center navy-center'>
+				<router-link to="/">
+					<button @click='UpdLogin()'>
+						Home
+					</button>
+				</router-link>
+
+				<router-link to="/blogs"><button>Blogs</button></router-link>
+
+				<router-link to="/">
+					<button @click='UpdLogin()' style = 'padding-top: 2px;padding-bottom: 5px;'>
+						<h3 class = 'robert-text' style = 'color: #fff'>
+							Dango
+						</h3>
+					</button>
+				</router-link>
+
+				<router-link to="/error-test"><button @click='UpdLogin()'>Home</button></router-link>
+				<router-link to="/account"><button @click='UpdLogin()'>Account</button></router-link>
+			</div>
+			<div class = 'd-flex justify-content-center navy-sub'>
+				<router-link to="/account"><button @click='UpdLogin()'>{{ULogin}}</button></router-link>
+			</div>
+		</div>
+		<!-- <transition name="fade"> -->
+			<router-view />
+		<!-- </transition>	 -->
+	</div>
 </template>
+
+<script>
+function getCookie(name) {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop().split(';').shift();
+}
+export default {
+    name: "App",
+    data () {
+        return {
+            ULogin: 'Account',
+        }
+	},
+	created() {
+        if (getCookie('login')){
+            this.ULogin = '#'+getCookie('login')
+        }
+	},
+	methods: {
+		UpdLogin(){
+			if (getCookie('login')){
+				this.ULogin = '#'+getCookie('login')
+			}else{
+				this.ULogin = 'ACCOUNT'
+			}
+		}
+	}
+		
+}
+</script>
 
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Montserrat');
 
-	/* .g-but{ */
+	/* Uni - elements */
 	button{
 		padding: 7px;
 		padding-left: 15px;
@@ -63,12 +117,41 @@
 		/* border: 3px #f77062 solid; */
 	}
 
-	h3{
+	/* Uni - classes */
+	.robert-text{
 		margin: 10px !important;
 		text-transform: uppercase;
-		font-family: 'Montserrat', sans-serif;
-		font-weight: 500;
+		/* font-family: sans-serif; */
+		font-weight: 900;
+		font-style: italic;
+		font-weight: bolder;
+		color: #f77062;
+		padding-left: 5px;
+		/* border-left: 3px solid #f77062; */
+	
 	}
+
+	.crocodile-card{
+		box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+		margin: 10px;
+		transition: 0.5s;
+		padding: 15px;
+	}
+	.crocodile-card-half{
+		width: 50%;
+	}
+	.crocodile-card:hover{
+		box-shadow: 2px 2px 10px #f77062, inset 0px 0px 0px 3px #f77062;
+	}
+	.crocodile-card b{
+		background: #f77062;
+		color: #fff;
+		padding-left: 10px;
+		padding-right: 10px;
+		box-shadow: 2px 2px 10px #f77062;
+		border-radius: 0px;
+	}
+	
 
 	.kitten-window{
 		position: absolute;
@@ -101,10 +184,86 @@
 		width: 50%;
 	}
 
-	.wrapper-thin{
-		width: 30%;
-		margin-left: 35%;
+	.abraham-wup{
+		width: 25%;
+		padding: 3%;
+		padding-right: calc(3% + 10px);
+		background: #fff;
+		box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+		height: 100%;
+		/* height: 1000px; */
 	}
+	.abraham-wbot{
+		z-index: 10;
+		background-image: url('assets/bg.jpg');
+		height: 100%;
+	}
+
+	.wrap-wisconsin-30{
+		width: 40%;
+		margin-left: 30%;
+	}
+
+	/* Navy */
+
+	.navy-wrap{
+		height: 5%;
+		z-index: 100;
+		background-color: #f77062;
+		box-shadow: 0px 0px 0px #f77062;
+		transition: 0.5s;
+		padding-top: 0;
+		overflow: hidden
+	}
+	.navy-wrap:hover{
+		box-shadow: 2px 2px 10px #f77062;
+		z-index: 10000;
+	}
+	.navy-center{
+		width: 80%;
+		float: left;
+	}
+	.navy-sub{
+		width: 10%;
+		float: left;
+		height: 80%;
+	}
+	.navy-wrap button{
+		margin-top: 0px;
+		padding: 6px;
+
+		text-transform: uppercase;
+		font-weight: 900;
+		/* text-decoration: underline;	 */
+		background: none;
+		color: #fff !important;
+		box-shadow: none;
+		font-weight: bolder;
+		color: #f77062;
+		border-radius: 0px !important;
+	}
+	.navy-wrap h3{
+		margin: 0px !important;
+		padding-left: 0px;
+	}
+	.navy-wrap h3:hover{
+		/* border-bottom: 3px solid #fff; */
+
+	}
+	.navy-wrap button:hover{
+		border-bottom: 3px solid #fff;
+	}
+
+	/* Other */
+
+	.fade-enter-active, .fade-leave-active {
+		transition: opacity .5s;
+	}
+	.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+		opacity: 0;
+	}
+
+	html, body, #app {height:100%;}
 	
 
 </style>

@@ -72,6 +72,11 @@ app.post('/NewUser',function(req, res) {
 	let clog = req.query.login
 	console.log('---')
 
+	if (clog.split(" ").join("") === ''){
+		res.status(200).send('not ok')
+		return
+	}
+
 	User.find(function (err, obj) {
 		if (err) return console.error(err);
 
@@ -84,8 +89,8 @@ app.post('/NewUser',function(req, res) {
 		}
 
 		if (found == 1){
-			console.log('not ok!')
-			res.status(200).send('not ok')
+			console.log('not ok, found')
+			res.status(200).send('found')
 			return
 		}else{
 			var userobj = new User({login: req.query.login,
@@ -113,16 +118,35 @@ app.post('/NewUser',function(req, res) {
 app.post('/CompareUser',function(req, res) {
 	let clog = req.query.login
 	let cpas = req.query.password
+	if (clog.split(" ").join("") === ''){
+		res.status(200).send('not ok')
+		return
+	}
 	User.find(function (err, obj) {
 		if (err) return console.error(err);
 		let found = 0
 
 		for (var i = 0; i < obj.length; i++) {
-			if ((clog === obj[i].login) && (cpas === obj[i].password)){
-				console.log(obj[i])
-				found = 1
-				res.status(200).send([obj[i].name,obj[i].date,obj[i].rate,obj[i]._id])
-				break
+			if (clog === obj[i].login){
+				if (cpas === obj[i].password){
+					found = 1
+					
+					obj[i].useragent = req.headers['user-agent']+' '+req.ip
+					obj[i].save(function (err, obj) {
+						if (err){
+							if (err) return console.error(err);
+						}
+					});
+					console.log(obj[i])
+
+					res.status(200).send([obj[i].name,obj[i].date,obj[i].rate,obj[i]._id])
+					break
+				}else{
+					found = 1
+					res.status(200).send('found')				
+					break
+				}
+				
 			}
 		}
 		if (found === 0){

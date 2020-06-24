@@ -1,5 +1,5 @@
-<template>
-    <div class="news-wrapper">
+<template>		
+    <div class = 'crocodile-card '>
         <div class="news-header">
             <h1>{{title}}</h1>
             <h2>{{author}}, {{processDate(date)}}</h2>
